@@ -123,17 +123,18 @@ The ETL implementation is located at:
 `src/etl/run_pipeline.py`
 
 The pipeline:
-1. Connects to PostgreSQL through a SQLAlchemy engine.
-2. Clears existing warehouse data as part of a full-refresh load.
-3. Loads customer, product, and seller dimensions.
-4. Generates a continuous date dimension.
-5. Loads the order-level fact table.
-6. Loads the order-item fact table.
-7. Validates expected row counts and referential integrity.
+1. Accepts an existing SQLAlchemy database engine.
+2. Starts a database transaction.
+3. Clears existing warehouse data as part of a full-refresh load.
+4. Loads customer, product, and seller dimensions.
+5. Generates a continuous date dimension.
+6. Loads the order-level fact table.
+7. Loads the order-item fact table.
+8. Validates expected row counts, referential integrity, and duplicate order items.
 
 The pipeline uses a database transaction so that validation failures roll back the load.
 
-**Important:** This is a full-refresh pipeline, not an incremental load. The source `raw` tables must already be populated before execution.
+**Important:** This is a full-refresh pipeline, not an incremental load. The source `raw` tables must already be populated before execution. The expected row counts are based on the Olist dataset version used in this project.
 
 ## 6. Data Quality and Validation
 
@@ -215,7 +216,7 @@ pip install -r requirements.txt
 
 1. Create or connect to a PostgreSQL database.
 2. Create and populate the `raw` schema using the Olist CSV files.
-3. Execute the relevant SQL scripts to create the analytics and warehouse structures.
+3. Execute the relevant SQL scripts to create the analytics and warehouse structures. The warehouse schema definitions are provided in `sql/warehouse/create_schema.sql`.
 4. Ensure the raw source tables are available before running the ETL pipeline.
 
 ### Step 4: Configure database connection
